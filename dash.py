@@ -137,7 +137,7 @@ st.plotly_chart(graph_habitation)
 
 # Affichage 1 : infos client
 
-# base_url = 'https://pierre-hirsch.herokuapp.com/infos_client'
+base_url = 'https://credit-score-phr.azurewebsites.net//infos_client'
 user_input = st.text_input("Entrez l'ID Client pour afficher les infos :")
 full_url = base_url + '?id_client=' + user_input
 response = requests.get(full_url)
@@ -149,7 +149,7 @@ else:
 
 # Affichage 2 : Prédiction
 
-# base_url = 'https://pierre-hirsch.herokuapp.com/infos_client'
+base_url = 'https://https://credit-score-phr.azurewebsites.net//infos_client'
 user_input2 = st.text_input("Entrez l'ID Client pour afficher la prédiction :")
 full_url = base_url + '?id_client=' + user_input2
 response = requests.get(full_url)
