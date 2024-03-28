@@ -8,12 +8,12 @@ app = Flask(__name__)
 
 dataset = pd.read_csv("app_test_dashboard_with_prediction.csv")
 
-@app.route("/")
-def hello():
-    """
-    Default route to display "Hello World!" message just to test you are good with flask :).
-    """
-    return "Hello World!"
+# @app.route("/")
+# def hello():
+#     """
+#     Default route to display "Hello World!" message just to test you are good with flask :).
+#     """
+#     return "Hello World!"
 
 @app.route("/infos_client", methods=["GET"])
 def infos_client():
