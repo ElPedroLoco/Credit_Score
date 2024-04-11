@@ -149,7 +149,7 @@ else:
 
 # Affichage 2 : Prédiction
 
-base_url = 'https://https://credit-score-phr.azurewebsites.net/predict_client'
+base_url = 'https://credit-score-phr.azurewebsites.net/predict_client'
 user_input2 = st.text_input("Entrez l'ID Client pour afficher la prédiction :")
 full_url = base_url + '?id_client=' + user_input2
 response = requests.get(full_url)
