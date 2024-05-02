@@ -22,7 +22,7 @@ Ce dépôt contient :
 
 Modèle de classification
 
-Le modèle retenu pour cet exercice est le modèle XGBoost.
+Le modèle retenu pour cet exercice est le modèle LightBGM.
 
 Dashboard / API
 
