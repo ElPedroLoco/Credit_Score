@@ -137,7 +137,7 @@ st.plotly_chart(graph_habitation)
 
 # Affichage 1 : infos client
 
-base_url = 'http://35.181.155.27:8501/infos_client'
+base_url = 'http://35.181.155.27:5001/infos_client'
 user_input = st.text_input("Entrez l'ID Client pour afficher les infos :")
 full_url = base_url + '?id_client=' + user_input
 response = requests.get(full_url)
@@ -149,7 +149,7 @@ else:
 
 # Affichage 2 : Prédiction
 
-base_url = 'http://35.181.155.27:8501/predict_client'
+base_url = 'http://35.181.155.27:5001/predict_client'
 user_input2 = st.text_input("Entrez l'ID Client pour afficher la prédiction :")
 full_url = base_url + '?id_client=' + user_input2
 response = requests.get(full_url)
