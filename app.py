@@ -230,7 +230,7 @@ def predict():
     print("Étape 14 réussie.")
 
     # Return the prediction as a response
-    return jsonify({'prediction': prediction}, {'prediction_proba': prediction_proba})
+    return jsonify({'prediction': prediction, 'prediction_proba': prediction_proba})
 
 
 if __name__ == '__main__':
