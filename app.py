@@ -16,21 +16,50 @@ dataset = pd.read_csv("app_test_dashboard_with_prediction.csv")
 #     """
 #     return "Hello World!"
 
+# @app.route("/infos_client", methods=["GET"])
+# def infos_client():
+#     # id = request.args.get("id_client")
+
+#     # data_client = dataset[dataset["SK_ID_CURR"] == int(id)]
+
+#     id = request.args.get("id_client")
+#     if id is None or not id.isdigit():
+#         return jsonify({"error": "Invalid or missing 'id_client' parameter"}), 400
+
+#     data_client = dataset[dataset["SK_ID_CURR"] == int(id)]
+#     # Continue with your logic to process data_client
+#     return jsonify({"data": data_client.to_dict()}), 200
+
+#     print(data_client)
+#     dict_infos = {
+#         "status_famille": data_client["NAME_FAMILY_STATUS"].item(),
+#         "nb_enfant": data_client["CNT_CHILDREN"].item(),
+#         "age": int(data_client["DAYS_BIRTH"].values / -365),
+#         "revenus": data_client["AMT_INCOME_TOTAL"].item(),
+#         "montant_credit": data_client["AMT_CREDIT"].item(),
+#         "annuites": data_client["AMT_ANNUITY"].item(),
+#         "montant_bien": data_client["AMT_GOODS_PRICE"].item()
+#     }
+
+#     response = json.loads(data_client.to_json(orient='index'))
+
+#     return response
+
 @app.route("/infos_client", methods=["GET"])
 def infos_client():
-    # id = request.args.get("id_client")
-
-    # data_client = dataset[dataset["SK_ID_CURR"] == int(id)]
-
-    id = request.args.get("id_client")
-    if id is None or not id.isdigit():
+    id_client = request.args.get("id_client")
+    
+    # Validate id_client parameter
+    if id_client is None or not id_client.isdigit():
         return jsonify({"error": "Invalid or missing 'id_client' parameter"}), 400
+    
+    id_client = int(id_client)
+    data_client = dataset[dataset["SK_ID_CURR"] == id_client]
 
-    data_client = dataset[dataset["SK_ID_CURR"] == int(id)]
-    # Continue with your logic to process data_client
-    return jsonify({"data": data_client.to_dict()}), 200
+    if data_client.empty:
+        return jsonify({"error": f"Client with id_client {id_client} not found"}), 404
 
-    print(data_client)
+    # Process data_client to extract necessary information
     dict_infos = {
         "status_famille": data_client["NAME_FAMILY_STATUS"].item(),
         "nb_enfant": data_client["CNT_CHILDREN"].item(),
@@ -41,9 +70,7 @@ def infos_client():
         "montant_bien": data_client["AMT_GOODS_PRICE"].item()
     }
 
-    response = json.loads(data_client.to_json(orient='index'))
-
-    return response
+    return jsonify({"data": dict_infos}), 200
 
 @app.route("/predict_client", methods=["GET"])
 def predict_client():
