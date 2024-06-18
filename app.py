@@ -79,13 +79,15 @@ def predict_client():
     # data = dataset[dataset["SK_ID_CURR"] == int(id)]
 
     #     id = request.args.get("id_client")
-
+    
+    id_client = request.args.get("id_client")
+    
     # Validate id_client parameter
-    if id is None or not id.isdigit():
+    if id_client is None or not id_client.isdigit():
         return jsonify({"error": "Invalid or missing 'id_client' parameter"}), 400
 
     # Convert id to integer
-    id_client = int(id)
+    id_client = int(id_client)
 
     # Retrieve data_client based on id_client
     data_client = dataset[dataset["SK_ID_CURR"] == id_client]
@@ -108,7 +110,7 @@ def predict_client():
 
     # Prépare la requête pour qu'elle soit conforme au modèle
     # ONE HOT ENCODING
-    data = pd.get_dummies(data)
+    data = pd.get_dummies(id_client)
     print("Étape 3 réussie.")
 
     # VALEURS ABERRANTES
