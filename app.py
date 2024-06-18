@@ -74,9 +74,25 @@ def infos_client():
 
 @app.route("/predict_client", methods=["GET"])
 def predict_client():
-    id = request.args.get("id_client")
+    # id = request.args.get("id_client")
 
-    data = dataset[dataset["SK_ID_CURR"] == int(id)]
+    # data = dataset[dataset["SK_ID_CURR"] == int(id)]
+
+    #     id = request.args.get("id_client")
+
+    # Validate id_client parameter
+    if id is None or not id.isdigit():
+        return jsonify({"error": "Invalid or missing 'id_client' parameter"}), 400
+
+    # Convert id to integer
+    id_client = int(id)
+
+    # Retrieve data_client based on id_client
+    data_client = dataset[dataset["SK_ID_CURR"] == id_client]
+
+    if data_client.empty:
+        return jsonify({"error": f"Client with id_client {id_client} not found"}), 404
+        
     # Chargement des modèles
     with open('model_weights/clf_xgb_o.pkl', 'rb') as f:
         model = joblib.load(f)
