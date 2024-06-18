@@ -110,7 +110,7 @@ def predict_client():
 
     # Prépare la requête pour qu'elle soit conforme au modèle
     # ONE HOT ENCODING
-    data = pd.get_dummies(id_client)
+    data = pd.get_dummies(data_client)
     print("Étape 3 réussie.")
 
     # VALEURS ABERRANTES
