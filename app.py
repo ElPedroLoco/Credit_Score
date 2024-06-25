@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import pandas as pd
 import numpy as np
 import joblib
@@ -11,7 +10,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir(ROOT_DIR)  # Set the current working directory to the root directory
 
 app = Flask(__name__)
-CORS(app)
+
 dataset = pd.read_csv("app_test_dashboard_with_prediction.csv")
 
 @app.route("/infos_client", methods=["GET"])
