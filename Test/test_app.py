@@ -36,14 +36,28 @@ class TestApp(unittest.TestCase):
             data = response.get_json()
             self.assertEqual(response.status_code, 400)
             self.assertIn('error', data)
-
+            
     def test_predict_client_valid_id(self):
-        # Mock request with valid id_client
         with self.client:
+            # Send a GET request to /predict_client with a valid id_client
             response = self.client.get('/predict_client?id_client=100001')
-            data = response.get_json()
+            
+            # Verify the response status code
             self.assertEqual(response.status_code, 200)
+
+            # Get the JSON data from the response
+            data = response.json
+
+            # Assert that 'prediction' key is present in the response JSON
             self.assertIn('prediction', data)
+            
+    # def test_predict_client_valid_id(self):
+    #     # Mock request with valid id_client
+    #     with self.client:
+    #         response = self.client.get('/predict_client?id_client=100001')
+    #         data = response.get_json()
+    #         self.assertEqual(response.status_code, 200)
+    #         self.assertIn('prediction', data)
 
     def test_predict_client_invalid_id(self):
         # Mock request with invalid id_client
