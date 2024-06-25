@@ -25,7 +25,7 @@ jobs:
 
       - name: Start Flask app
         run: |
-          gunicorn -b 0.0.0.0:5000 -w 2 app:app &  # Start Flask app in the background
+          gunicorn -b 127.0.0.1:5000 -w 2 app:app &  # Start Flask app in the background
 
       - name: Run unit tests
         run: |
