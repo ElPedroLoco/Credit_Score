@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import json
+import os
 
 # Determine the root directory of your project
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
