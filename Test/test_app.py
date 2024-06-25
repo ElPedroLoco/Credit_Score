@@ -1,9 +1,10 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import os
-from app import app  # Assuming your Flask app instance is named 'app'
+import sys
+import os
 
-# Adjust the path to include the parent directory
+# Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import app
