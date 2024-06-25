@@ -48,8 +48,14 @@ class TestApp(unittest.TestCase):
             # Get the JSON data from the response
             data = response.json
 
-            # Assert that 'prediction' key is present in the response JSON
-            self.assertIn('prediction', data)
+            # Assert that the response is a list
+            self.assertIsInstance(data, list)
+
+            # Assert that the first dictionary in the list has 'prediction' key
+            self.assertIn('prediction', data[0])
+            
+            # # Assert that 'prediction' key is present in the response JSON
+            # self.assertIn('prediction', data)
             
     # def test_predict_client_valid_id(self):
     #     # Mock request with valid id_client
