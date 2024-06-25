@@ -1,7 +1,10 @@
 import unittest
 import json
-from app import app  # Import the Flask app to be tested
 
+# Ensure the dashboard directory is in the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+
+from app import app  # Import the app from the dashboard module
 class TestApp(unittest.TestCase):
     
     def setUp(self):
