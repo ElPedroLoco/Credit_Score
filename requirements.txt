@@ -5,6 +5,7 @@ argon2-cffi-bindings==21.2.0
 arrow==1.2.3
 asttokens==2.2.1
 attrs==22.1.0
+setuptools
 backcall==0.2.0
 beautifulsoup4==4.11.1
 bleach==5.0.1
@@ -108,7 +109,6 @@ rfc3986-validator==0.1.1
 rich==13.0.1
 scikit-learn==1.2.0
 scipy==1.9.3
-setuptools
 semver==2.13.0
 Send2Trash==1.8.0
 six==1.16.0
