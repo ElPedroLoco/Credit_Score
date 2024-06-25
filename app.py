@@ -5,6 +5,10 @@ import numpy as np
 import joblib
 import json
 
+# Determine the root directory of your project
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir(ROOT_DIR)  # Set the current working directory to the root directory
+
 app = Flask(__name__)
 CORS(app)
 dataset = pd.read_csv("app_test_dashboard_with_prediction.csv")
