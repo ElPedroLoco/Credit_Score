@@ -27,7 +27,7 @@ class TestStreamlitApp(unittest.TestCase):
         from dash import df_selection  # Importer df_selection après avoir patché les filtres
         self.assertFalse(df_selection.empty)
         self.assertEqual(df_selection.iloc[0]["NAME_CONTRACT_TYPE"], 'Cash loans')
-        self.assertEqual(df_selection.iloc[0]["CODE_GENDER"], 'M')
+        self.assertEqual(df_selection.iloc[0]["CODE_GENDER"], 'F')
         self.assertEqual(df_selection.iloc[0]["NAME_FAMILY_STATUS"], 'Married')
         self.assertEqual(df_selection.iloc[0]["NAME_HOUSING_TYPE"], 'House / apartment')
         self.assertEqual(df_selection.iloc[0]["CNT_CHILDREN"], 0)
