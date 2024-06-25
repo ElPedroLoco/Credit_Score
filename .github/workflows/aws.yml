@@ -3,7 +3,7 @@ name: Flask Unit Tests
 on:
   push:
     branches:
-      - main  # Adjust to your main branch name
+      - main 
 
 jobs:
   test:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'  # Adjust to your Python version
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
@@ -25,8 +25,8 @@ jobs:
 
       - name: Start Flask app
         run: |
-          gunicorn -b 127.0.0.1:5000 -w 2 app:app &  # Start Flask app in the background
+          gunicorn -b 0.0.0.0:5000 -w 2 app:app &
 
       - name: Run unit tests
         run: |
-          python -m unittest discover Test  # Adjust based on your test setup
+          python -m unittest discover Test
