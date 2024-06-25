@@ -2,6 +2,9 @@ import unittest
 import pandas as pd
 from unittest.mock import patch
 
+# Ajouter le répertoire parent au chemin d'importation
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 # Importer les éléments nécessaires depuis votre script dash.py
 from dash import df
 
