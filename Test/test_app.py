@@ -1,8 +1,8 @@
 import unittest
 import json
 
-# Ensure the dashboard directory is in the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+# Adjust the path to include the parent directory
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import app  # Import the app from the dashboard module
 class TestApp(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestApp(unittest.TestCase):
 
     def test_infos_client(self):
         # Test for the "/infos_client" endpoint
-        response = self.app.get('/infos_client?id_client=1001')
+        response = self.app.get('/infos_client?id_client=100001')
         # Check if the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
         # Check if the response data contains the expected fields for client information
@@ -33,24 +33,19 @@ class TestApp(unittest.TestCase):
 
     def test_predict_client(self):
         # Test for the "/predict_client" endpoint
-        response = self.app.get('/predict_client?id_client=1001')
+        response = self.app.get('/predict_client?id_client=100001')
         # Check if the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
         # Check if the response data contains the expected fields for prediction
         data = json.loads(response.data.decode('utf-8'))
         self.assertTrue("prediction" in data)
         self.assertTrue("prediction_proba" in data)
-        # Add more assertions for other fields as needed
 
     def test_predict(self):
         # Test for the "/predict" endpoint
         # Prepare test data for prediction
         test_data = {
-            "SK_ID_CURR": 1001,
-            "NAME_FAMILY_STATUS": "Married",
-            "CNT_CHILDREN": 1,
-            "DAYS_BIRTH": -15000,
-            # Add other necessary fields
+            "SK_ID_CURR": 100001,
         }
         # Make a POST request to the endpoint with test data
         response = self.app.post('/predict', json=test_data)
@@ -60,7 +55,6 @@ class TestApp(unittest.TestCase):
         data = json.loads(response.data.decode('utf-8'))
         self.assertTrue("prediction" in data)
         self.assertTrue("prediction_proba" in data)
-        # Add more assertions for other fields as needed
 
 if __name__ == '__main__':
     unittest.main()
