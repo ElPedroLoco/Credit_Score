@@ -111,14 +111,14 @@ class TestStreamlitApp(unittest.TestCase):
     @patch('dash.habitation_type', ['House / apartment'])
     @patch('dash.nombre_enfants', [0])
     def test_filter_data(self):
-        # Vérifie que le filtrage fonctionne correctement
-        from dash import df_selection  # Importer df_selection après avoir patché les filtres
+        # # Vérifie que le filtrage fonctionne correctement
+        # from dash import df_selection  # Importer df_selection après avoir patché les filtres
         self.assertFalse(df_selection.empty)
-        self.assertEqual(df_selection.iloc[0]["NAME_CONTRACT_TYPE"], 'Cash loans')
-        self.assertEqual(df_selection.iloc[0]["CODE_GENDER"], 'F')
-        self.assertEqual(df_selection.iloc[0]["NAME_FAMILY_STATUS"], 'Married')
-        self.assertEqual(df_selection.iloc[0]["NAME_HOUSING_TYPE"], 'House / apartment')
-        self.assertEqual(df_selection.iloc[0]["CNT_CHILDREN"], 0)
+        self.assertEqual(df.iloc[0]["NAME_CONTRACT_TYPE"], 'Cash loans')
+        self.assertEqual(df.iloc[0]["CODE_GENDER"], 'F')
+        self.assertEqual(df.iloc[0]["NAME_FAMILY_STATUS"], 'Married')
+        self.assertEqual(df.iloc[0]["NAME_HOUSING_TYPE"], 'House / apartment')
+        self.assertEqual(df.iloc[0]["CNT_CHILDREN"], 0)
 
 if __name__ == '__main__':
     unittest.main()
