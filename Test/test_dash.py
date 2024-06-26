@@ -104,6 +104,7 @@ class TestStreamlitApp(unittest.TestCase):
         # Vérifie que le DataFrame est bien chargé
         self.assertIsInstance(df, pd.DataFrame)
         self.assertFalse(df.empty)
+        print("DataFrame loaded successfully.")
 
     @patch('dash.contract_type', ['Cash loans'])
     @patch('dash.sexe', ['M'])
@@ -112,14 +113,14 @@ class TestStreamlitApp(unittest.TestCase):
     @patch('dash.nombre_enfants', [0])
     
     def test_filter_data(self):
-        # # Vérifie que le filtrage fonctionne correctement
-        # from dash import df_selection  # Importer df_selection après avoir patché les filtres
+        # Vérifie que le filtrage fonctionne correctement
         self.assertFalse(df.empty)
         self.assertEqual(df.iloc[0]["NAME_CONTRACT_TYPE"], 'Cash loans')
         self.assertEqual(df.iloc[0]["CODE_GENDER"], 'F')
         self.assertEqual(df.iloc[0]["NAME_FAMILY_STATUS"], 'Married')
         self.assertEqual(df.iloc[0]["NAME_HOUSING_TYPE"], 'House / apartment')
         self.assertEqual(df.iloc[0]["CNT_CHILDREN"], 0)
+        print("Filtering data test passed.")
 
 if __name__ == '__main__':
     unittest.main()
