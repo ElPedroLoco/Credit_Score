@@ -19,7 +19,7 @@ class TestStreamlitApp(unittest.TestCase):
         print("DataFrame loaded successfully.")
 
     @patch('dash.contract_type', ['Cash loans'])
-    @patch('dash.sexe', ['M'])
+    @patch('dash.sexe', ['F'])
     @patch('dash.civil_status', ['Married'])
     @patch('dash.habitation_type', ['House / apartment'])
     @patch('dash.nombre_enfants', [0])
