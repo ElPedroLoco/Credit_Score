@@ -95,8 +95,8 @@ import os
 # Ajouter le répertoire parent au chemin d'importation
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Importer les éléments nécessaires depuis votre script dash.py
-from dash import df
+# Chargement du dataset
+df = pd.read_csv("app_test_dashboard_with_prediction.csv")
 
 class TestStreamlitApp(unittest.TestCase):
 
