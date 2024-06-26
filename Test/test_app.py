@@ -20,26 +20,32 @@ class TestApp(unittest.TestCase):
 
         # Create a test client
         self.client = app.test_client()
+        print("Test Setup completed.")
 
     def test_infos_client_valid_id(self):
         # Mock request with valid id_client
         with self.client:
+            print("Testing /infos_client with valid id_client...")
             response = self.client.get('/infos_client?id_client=100001')
             data = response.get_json()
             self.assertEqual(response.status_code, 200)
             self.assertIn('data', data)
+            print("/infos_client test passed with valid id_client.")
 
     def test_infos_client_invalid_id(self):
         # Mock request with invalid id_client
         with self.client:
+            print("Testing /infos_client with invalid id_client...")
             response = self.client.get('/infos_client?id_client=abc')
             data = response.get_json()
             self.assertEqual(response.status_code, 400)
             self.assertIn('error', data)
+            print("/infos_client test passed with invalid id_client.")
             
     def test_predict_client_valid_id(self):
         with self.client:
             # Send a GET request to /predict_client with a valid id_client
+            print("Testing /predict_client with valid id_client...")
             response = self.client.get('/predict_client?id_client=100001')
             
             # Verify the response status code
@@ -54,13 +60,17 @@ class TestApp(unittest.TestCase):
             # Assert that the first dictionary in the list has 'prediction' key
             self.assertIn('prediction', data[0])
 
+            print("/predict_client test passed with valid id_client.")
+
     def test_predict_client_invalid_id(self):
         # Mock request with invalid id_client
         with self.client:
+            print("Testing /predict_client with invalid id_client...")
             response = self.client.get('/predict_client?id_client=abc')
             data = response.get_json()
             self.assertEqual(response.status_code, 400)
             self.assertIn('error', data)
+            print("/predict_client test passed with invalid id_client.")
 
 if __name__ == '__main__':
     unittest.main()
