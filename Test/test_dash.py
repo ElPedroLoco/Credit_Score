@@ -110,6 +110,7 @@ class TestStreamlitApp(unittest.TestCase):
     @patch('dash.civil_status', ['Married'])
     @patch('dash.habitation_type', ['House / apartment'])
     @patch('dash.nombre_enfants', [0])
+    
     def test_filter_data(self):
         # # Vérifie que le filtrage fonctionne correctement
         # from dash import df_selection  # Importer df_selection après avoir patché les filtres
