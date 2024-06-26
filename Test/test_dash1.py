@@ -7,6 +7,7 @@ import os
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# Import the module only once to apply patches correctly
 import dash
 
 class TestDashApp(unittest.TestCase):
@@ -37,15 +38,16 @@ class TestDashApp(unittest.TestCase):
             [0]              # nombre_enfants
         ]
 
-        # Running the dash file
-        dash.st.set_page_config = MagicMock()  # Mocking set_page_config
-        dash.st.title = MagicMock()  # Mocking title
-        dash.st.markdown = MagicMock()  # Mocking markdown
-        dash.st.subheader = MagicMock()  # Mocking subheader
-        dash.st.plotly_chart = MagicMock()  # Mocking plotly_chart
+        # Patching Streamlit functions
+        dash.st.set_page_config = MagicMock()
+        dash.st.title = MagicMock()
+        dash.st.markdown = MagicMock()
+        dash.st.subheader = MagicMock()
+        dash.st.plotly_chart = MagicMock()
 
-        # Re-import dash to execute the code with mocks in place
-        import dash
+        # Re-execute the code within the dash module with mocks in place
+        import importlib
+        importlib.reload(dash)
 
         # Assertions to ensure that the DataFrame is filtered correctly
         filtered_df = dash.df_selection
@@ -68,9 +70,12 @@ class TestDashApp(unittest.TestCase):
         mock_response.json.return_value = {'info': 'some client info'}
         mock_get.return_value = mock_response
 
-        # Running the dash file
-        dash.st.write = MagicMock()  # Mocking write
-        import dash
+        # Mocking Streamlit write function
+        dash.st.write = MagicMock()
+
+        # Re-execute the code within the dash module with mocks in place
+        import importlib
+        importlib.reload(dash)
 
         # Assertions to ensure that the API call is made correctly
         dash.requests.get.assert_any_call('http://ec2-35-181-155-27.eu-west-3.compute.amazonaws.com:5000/infos_client?id_client=123')
@@ -102,15 +107,16 @@ class TestDashApp(unittest.TestCase):
             [0, 1]              # nombre_enfants
         ]
 
-        # Running the dash file
-        dash.st.set_page_config = MagicMock()  # Mocking set_page_config
-        dash.st.title = MagicMock()  # Mocking title
-        dash.st.markdown = MagicMock()  # Mocking markdown
-        dash.st.subheader = MagicMock()  # Mocking subheader
-        dash.st.plotly_chart = MagicMock()  # Mocking plotly_chart
+        # Patching Streamlit functions
+        dash.st.set_page_config = MagicMock()
+        dash.st.title = MagicMock()
+        dash.st.markdown = MagicMock()
+        dash.st.subheader = MagicMock()
+        dash.st.plotly_chart = MagicMock()
 
-        # Re-import dash to execute the code with mocks in place
-        import dash
+        # Re-execute the code within the dash module with mocks in place
+        import importlib
+        importlib.reload(dash)
 
         # Assertions to ensure that statistics are calculated correctly
         self.assertEqual(dash.nombre_clients, 2)
