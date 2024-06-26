@@ -34,5 +34,3 @@ J'ai utilisé deux librairies Python pour ce sujet :
 Données d'entrées
 
     Lien de téléchargement des données d'entrées : https://www.kaggle.com/c/home-credit-default-risk/data
-    Notebook de départ pour la partie Features Engineering : https://www.kaggle.com/willkoehrsen/start-here-a-gentle-introduction
-
