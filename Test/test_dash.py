@@ -18,11 +18,11 @@ class TestStreamlitApp(unittest.TestCase):
         self.assertFalse(df.empty)
         print("DataFrame loaded successfully.")
 
-    @patch('dash.contract_type', ['Cash loans'])
-    @patch('dash.sexe', ['M'])
-    @patch('dash.civil_status', ['Married'])
-    @patch('dash.habitation_type', ['House / apartment'])
-    @patch('dash.nombre_enfants', [0])
+    @patch('df.contract_type', ['Cash loans'])
+    @patch('df.sexe', ['M'])
+    @patch('df.civil_status', ['Married'])
+    @patch('df.habitation_type', ['House / apartment'])
+    @patch('df.nombre_enfants', [0])
     
     def test_filter_data(self):
         # Vérifie que le filtrage fonctionne correctement
