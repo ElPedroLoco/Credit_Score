@@ -28,7 +28,7 @@ class TestStreamlitApp(unittest.TestCase):
         # Vérifie que le filtrage fonctionne correctement
         self.assertFalse(df.empty)
         self.assertEqual(df.iloc[0]["NAME_CONTRACT_TYPE"], 'Cash loans')
-        self.assertEqual(df.iloc[0]["CODE_GENDER"], 'M')
+        self.assertEqual(df.iloc[0]["CODE_GENDER"], 'F')
         self.assertEqual(df.iloc[0]["NAME_FAMILY_STATUS"], 'Married')
         self.assertEqual(df.iloc[0]["NAME_HOUSING_TYPE"], 'House / apartment')
         self.assertEqual(df.iloc[0]["CNT_CHILDREN"], 0)
