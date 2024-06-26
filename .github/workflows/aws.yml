@@ -23,6 +23,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Add any requirements if necessary
 
+      - name: Start Streamlit app
+        run: |
+          streamlit run app.py &
+
+      - name: Wait for Streamlit to start
+        run: sleep 10
+
       - name: Start Flask app
         run: |
           gunicorn -b 0.0.0.0:5000 -w 2 app:app --log-file=gunicorn.log &
