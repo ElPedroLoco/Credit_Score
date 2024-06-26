@@ -80,7 +80,7 @@ class TestApp(unittest.TestCase):
                 print("Testing home page / ...")
                 response = self.client.get('/')
                 self.assertEqual(response.status_code, 200)
-                self.assertIn(b'Welcome', response.data)
+                self.assertIn(b'Credit Score', response.data)
                 print("Home page test passed.")
             except Exception as e:
                 print(f"Error in test_home_page: {e}")
