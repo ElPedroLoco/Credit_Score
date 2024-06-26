@@ -25,7 +25,7 @@ jobs:
 
       - name: Start Flask app
         run: |
-          gunicorn -b 0.0.0.0:5000 -w 2 app:app &
+          gunicorn -b 0.0.0.0:5000 -w 2 app:app & --log-file=gunicorn.log
 
       - name: Run unit tests
         run: |
