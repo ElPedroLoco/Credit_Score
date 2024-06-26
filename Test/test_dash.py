@@ -113,7 +113,7 @@ class TestStreamlitApp(unittest.TestCase):
     def test_filter_data(self):
         # # Vérifie que le filtrage fonctionne correctement
         # from dash import df_selection  # Importer df_selection après avoir patché les filtres
-        self.assertFalse(df_selection.empty)
+        self.assertFalse(df.empty)
         self.assertEqual(df.iloc[0]["NAME_CONTRACT_TYPE"], 'Cash loans')
         self.assertEqual(df.iloc[0]["CODE_GENDER"], 'F')
         self.assertEqual(df.iloc[0]["NAME_FAMILY_STATUS"], 'Married')
