@@ -80,6 +80,7 @@ def predict_client():
     data['DAYS_EMPLOYED_ANOM'] = data["DAYS_EMPLOYED"] == 365243
     # Replace the anomalous values with nan
     data['DAYS_EMPLOYED'].replace({365243: np.nan}, inplace=True)
+    data = data.copy()
     print("Étape 4 réussie.")
 
     # Traitement des valeurs négatives
