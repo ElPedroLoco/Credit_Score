@@ -13,6 +13,10 @@ app = Flask(__name__)
 
 dataset = pd.read_csv("app_test_dashboard_with_prediction.csv")
 
+@app.route('/')
+def home():
+    return jsonify({'message': 'Credit Score'})
+
 @app.route("/infos_client", methods=["GET"])
 def infos_client():
     id_client = request.args.get("id_client")
