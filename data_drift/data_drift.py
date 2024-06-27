@@ -7,10 +7,11 @@ import pandas as pd
 import numpy as np
 
 df = pd.read_csv('df.csv', sep = ",")
-application_train = df.dropna(subset=['TARGET']).drop(columns=['SK_ID_CURR','TARGET'])
-application_test = df[df['TARGET'].isna()].drop(columns=['SK_ID_CURR','TARGET'])
+df_test = pd.read_csv('df_test.csv', sep = ",")
+application_train = df.drop(columns=['SK_ID_CURR','TARGET'])
+application_test = df_test.drop(columns=['SK_ID_CURR','TARGET'])
 
-#Pour les colonnes catégorielles on va ne prendre que les colonnes ayant que des 0 et des 1 
+# Pour les colonnes catégorielles on va ne prendre que les colonnes ayant que des 0 et des 1 
 categorical_columns = []
 
 # Parcourir chaque colonne
