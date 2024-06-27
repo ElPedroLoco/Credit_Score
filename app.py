@@ -235,5 +235,17 @@ def predict():
     # Return the prediction as a response
     return jsonify({'prediction': prediction}, {'prediction_proba': prediction_proba})
 
+    # Calculer les valeurs SHAP pour l'échantillon donné
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(sample_scaled)
+    
+    # Retourner les valeurs SHAP avec la probabilité
+    return jsonify({
+        'probability': proba*100, 
+        'shap_values': shap_values[1][0].tolist(),
+        'feature_names': sample.columns.tolist(),
+        'feature_values': sample.values[0].tolist()
+    })
+
 if __name__ == '__main__':
      app.run(debug=True, port=5000, host='0.0.0.0')
