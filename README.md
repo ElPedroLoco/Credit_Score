@@ -30,6 +30,8 @@ J'ai utilisé deux librairies Python pour ce sujet :
 
     Flask
     Streamlit
+    
+Les tests on été effectués avec la librairie Unitest.
 
 Données d'entrées
 
