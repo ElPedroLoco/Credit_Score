@@ -1,8 +1,8 @@
 ﻿# Projet-7-Pierre Hirsch
  
-OpenClassRooms_Projet7
 Implémentez un modèle de scoring
-Présentation
+
+Présentation :
 
 La mission principale de ce projet est de prédire le risque de faillite d'un client pour une société de crédit. Pour cela, nous devons configurer un modèle de classification binaire et d'en analyser les différentes métriques, évaluer via MLFlow.
 
