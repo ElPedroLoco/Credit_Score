@@ -17,7 +17,7 @@ model = joblib.load(model_path)
 scaler_path = os.path.join(current_directory, "model_weights", "scaler.pkl")
 scaler = joblib.load(scaler_path)
 
-@app.route("/predict", methods=['POST'])
+@app.route("/predict_client", methods=['POST'])
 def predict():
     data = request.json
     sk_id_curr = data['SK_ID_CURR']
