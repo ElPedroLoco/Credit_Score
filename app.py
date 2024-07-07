@@ -23,7 +23,7 @@ def predict():
     sk_id_curr = data['SK_ID_CURR']
 
     # Construisez le chemin complet vers df_train.csv en utilisant le chemin relatif depuis l'emplacement de api.py
-    csv_path = os.path.join(current_directory, "df_test.csv")
+    csv_path = os.path.join(current_directory, "model_weights", "df_test.csv")
     # Charger le CSV
     df = pd.read_csv(csv_path)
     sample = df[df['SK_ID_CURR'] == sk_id_curr]
