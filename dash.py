@@ -97,7 +97,7 @@ def find_closest_description(feature_name, definitions_df):
 
 def plot_distribution(selected_feature, col):
     if selected_feature:
-        data = df_train[selected_feature]
+        data = df_test[selected_feature]
 
         # Trouver la valeur de la fonctionnalité pour le client actuel :
         client_feature_value = feature_values[feature_names.index(selected_feature)]
