@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# Récupérez le répertoire actuel du fichier api.py
+# Récupérez le répertoire actuel du fichier app.py
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Charger le modèle en dehors de la clause if __name__ == "__main__":
@@ -41,11 +41,21 @@ def predict():
     # Calculer les valeurs SHAP pour l'échantillon donné
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(sample_scaled)
+
+    # Handle SHAP output depending on its structure
+    if isinstance(shap_values, list):
+        if len(shap_values) > 1:
+            shap_values_output = shap_values[1][0].tolist()
+        else:
+            shap_values_output = shap_values[0][0].tolist()
+    else:
+        shap_values_output = shap_values.tolist()
     
     # Retourner les valeurs SHAP avec la probabilité
     return jsonify({
         'probability': proba*100, 
-        'shap_values': shap_values[1][0].tolist(),
+        # 'shap_values': shap_values[1][0].tolist(),
+        'shap_values': shap_values_output
         'feature_names': sample.columns.tolist(),
         'feature_values': sample.values[0].tolist()
     })
