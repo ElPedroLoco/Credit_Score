@@ -54,11 +54,12 @@ def predict():
     # Retourner les valeurs SHAP avec la probabilité
     return jsonify({
         'probability': proba*100, 
-        # 'shap_values': shap_values[1][0].tolist(),
-        'shap_values': shap_values_output
+        'shap_values': shap_values_output,
         'feature_names': sample.columns.tolist(),
         'feature_values': sample.values[0].tolist()
     })
+
+        #'shap_values': shap_values[1][0].tolist(),
 
 if __name__ == "__main__":
     port = os.environ.get("PORT", 5000)
