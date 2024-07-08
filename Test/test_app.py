@@ -23,7 +23,7 @@ def test_model_loading():
     # Détermine le chemin du répertoire courant
     current_directory = os.path.dirname(os.path.abspath(__file__))
     # Détermine le chemin du fichier contenant le modèle entraîné
-    model_path = os.path.join(current_directory, "model_weights",  "model.pkl")
+    model_path = os.path.join(current_directory, "..", "model_weights",  "model.pkl")
     # Charge le modèle à partir du fichier
     model = joblib.load(model_path)
     # Vérifie que le modèle a été chargé correctement
@@ -34,7 +34,7 @@ def test_csv_loading():
     # Détermine le chemin du répertoire courant
     current_directory = os.path.dirname(os.path.abspath(__file__))
     # Détermine le chemin du fichier CSV
-    csv_path = os.path.join(current_directory, "model_weights", "df_train.csv")
+    csv_path = os.path.join(current_directory, "..", "model_weights", "df_train.csv")
     # Charge le fichier CSV dans un DataFrame pandas
     df = pd.read_csv(csv_path)
     # Vérifie que le DataFrame n'est pas vide
@@ -48,7 +48,7 @@ def test_prediction():
     # Détermine le chemin du répertoire courant
     current_directory = os.path.dirname(os.path.abspath(__file__))
     # Détermine le chemin du fichier CSV contenant les données de test
-    csv_path = os.path.join(current_directory, "model_weights", "df_train.csv")
+    csv_path = os.path.join(current_directory, "..", "model_weights", "df_train.csv")
     # Charge le fichier CSV dans un DataFrame pandas
     df = pd.read_csv(csv_path)
     # Prend un échantillon pour la prédiction
