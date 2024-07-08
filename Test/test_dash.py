@@ -1,9 +1,8 @@
 import unittest
 import os
 import pandas as pd
-import requests
+import numpy as np
 import streamlit as st
-from streamlit_testing import StreamlitTest
 
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -20,7 +19,7 @@ from dash import (
     get_state,
 )
 
-class DashboardTestCase(StreamlitTest):
+class DashboardTestCase(unittest.TestCase):
     def setUp(self):
         # Charger les données pour les tests
         current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +29,6 @@ class DashboardTestCase(StreamlitTest):
         )
         self.df_test = pd.read_csv(path_df_test)
         self.definition_features_df = pd.read_csv(path_definition_features_df)
-        self.client = requests.Session()
 
     def tearDown(self):
         # Cleanup après chaque test
@@ -117,7 +115,6 @@ class DashboardTestCase(StreamlitTest):
 
 if __name__ == '__main__':
     unittest.main()
-
 
 # import unittest
 # from unittest.mock import patch, MagicMock
