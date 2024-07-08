@@ -21,7 +21,7 @@ def client():
 # Teste le chargement du modèle de prédiction
 def test_model_loading():
     # Détermine le chemin du fichier contenant le modèle entraîné
-    model_path = os.path.join(current_directory, "..", "model_weights", "clf_xgb_o.pkl")
+    model_path = os.path.join(current_directory, "..", "model_weights", "model.pkl")
     # Charge le modèle à partir du fichier
     model = joblib.load(model_path)
     # Vérifie que le modèle a été chargé correctement
