@@ -38,6 +38,7 @@ jobs:
       - name: Check Gunicorn logs
         run: cat gunicorn.log
 
-      - name: Run unittest tests
+      - name: Run tests
         run: |
-          python -m unittest discover -s Test -p 'test_*.py'
+          pytest Test/test_app.py
+          pytest Test/test_dash.py
