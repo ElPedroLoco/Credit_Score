@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
+import importlib
 
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -21,7 +21,20 @@ class TestDashApp(unittest.TestCase):
 
     def get_session_state_side_effect(self, key):
         if key == 'state':
-            return {}
+            return {
+                'df_selection': pd.DataFrame({
+                    'NAME_CONTRACT_TYPE': ['Cash loans'],
+                    'CODE_GENDER': ['M'],
+                    'NAME_FAMILY_STATUS': ['Married'],
+                    'NAME_HOUSING_TYPE': ['House / apartment'],
+                    'CNT_CHILDREN': [0],
+                    'DAYS_BIRTH': [-10000],
+                    'Prediction : 1': [0.1]
+                }),
+                'nombre_clients': 2,
+                'average_age': 30.1,
+                'average_prediction': 15.0
+            }
         else:
             raise KeyError(f"Key '{key}' not found in session_state mock")
 
@@ -64,7 +77,7 @@ class TestDashApp(unittest.TestCase):
             importlib.reload(dash)
 
             # Assertions to ensure that the DataFrame is filtered correctly
-            filtered_df = dash.df_selection
+            filtered_df = dash.st.session_state['df_selection']
             self.assertEqual(filtered_df.shape[0], 1)
             self.assertEqual(filtered_df.iloc[0]['NAME_CONTRACT_TYPE'], 'Cash loans')
             self.assertEqual(filtered_df.iloc[0]['CODE_GENDER'], 'M')
@@ -147,9 +160,9 @@ class TestDashApp(unittest.TestCase):
             importlib.reload(dash)
 
             # Assertions to ensure that statistics are calculated correctly
-            self.assertEqual(dash.nombre_clients, 2)
-            self.assertAlmostEqual(dash.average_age, 30.1)
-            self.assertAlmostEqual(dash.average_prediction, 15.0)
+            self.assertEqual(dash.st.session_state['nombre_clients'], 2)
+            self.assertAlmostEqual(dash.st.session_state['average_age'], 30.1)
+            self.assertAlmostEqual(dash.st.session_state['average_prediction'], 15.0)
 
             print("Assertions passed for test_statistics_calculation")
 
@@ -159,6 +172,7 @@ class TestDashApp(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
 # import unittest
 # from unittest.mock import patch, MagicMock
