@@ -34,7 +34,7 @@ def test_csv_loading():
     # # Détermine le chemin du répertoire courant
     # current_directory = os.path.dirname(os.path.abspath(__file__))
     # Détermine le chemin du fichier CSV
-    csv_path = os.path.join("model_weights", "df_train.csv")
+    csv_path = os.path.join("model_weights", "df_test.csv")
     # Charge le fichier CSV dans un DataFrame pandas
     df = pd.read_csv(csv_path)
     # Vérifie que le DataFrame n'est pas vide
@@ -48,7 +48,7 @@ def test_prediction():
     # Détermine le chemin du répertoire courant
     # current_directory = os.path.dirname(os.path.abspath(__file__))
     # Détermine le chemin du fichier CSV contenant les données de test
-    csv_path = os.path.join("model_weights", "df_train.csv")
+    csv_path = os.path.join("model_weights", "df_test.csv")
     # Charge le fichier CSV dans un DataFrame pandas
     df = pd.read_csv(csv_path)
     # Prend un échantillon pour la prédiction
