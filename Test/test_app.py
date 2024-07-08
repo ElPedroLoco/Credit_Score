@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 import os
 import sys
 import joblib
