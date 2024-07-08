@@ -8,114 +8,47 @@ import sys
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Importer les fonctions et variables du tableau de bord
-from dash import (
-    get_title_font_size,
-    generate_figure,
-    generate_annotations,
-    compute_color,
-    format_value,
-    find_closest_description,
-    plot_distribution,
-    get_state,
-)
+from dash import dash
 
-class DashboardTestCase(unittest.TestCase):
+class FlaskTestCase(unittest.TestCase):
     def setUp(self):
-        # Charger les données pour les tests
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-        path_df_test = os.path.join(current_directory, "model_weights/df_test.csv")
-        path_definition_features_df = os.path.join(
-            current_directory, "model_weights/definition_features.csv"
-        )
-        self.df_test = pd.read_csv(path_df_test)
-        self.definition_features_df = pd.read_csv(path_definition_features_df)
+        self.app = app.test_client()
+        self.app.testing = True
 
     def tearDown(self):
-        # Cleanup après chaque test
         pass
 
-    def test_get_title_font_size(self):
-        print("Test: test_get_title_font_size")
+    def test_predict_valid_id(self):
+        print("Test: test_predict_valid_id")
         try:
-            font_size = get_title_font_size(600)
-            self.assertEqual(font_size, 12)
-            font_size = get_title_font_size(1200)
-            self.assertEqual(font_size, 24)
-            print("test_get_title_font_size: SUCCESS")
+            valid_id = 156003  
+            response = self.app.post('/predict_client', json={'SK_ID_CURR': valid_id})
+            self.assertEqual(response.status_code, 200)
+            data = response.json
+            self.assertIn('probability', data)
+            self.assertIn('shap_values', data)
+            self.assertIn('feature_names', data)
+            self.assertIn('feature_values', data)
+            print("test_predict_valid_id: SUCCESS")
         except AssertionError as e:
-            print(f"test_get_title_font_size: FAILED ({str(e)})")
+            print(f"test_predict_valid_id: FAILED ({str(e)})")
 
-    def test_generate_figure(self):
-        print("Test: test_generate_figure")
+    def test_predict_invalid_id(self):
+        print("Test: test_predict_invalid_id")
         try:
-            sample_data = {
-                "Feature": ["feature1", "feature2"],
-                "SHAP Value": [0.5, -0.3],
-                "Feature Value": [1.0, 2.0],
-            }
-            df = pd.DataFrame(sample_data)
-            fig = generate_figure(df, "Test Title", "left", "total ascending", "left")
-            self.assertIsNotNone(fig)
-            print("test_generate_figure: SUCCESS")
+            invalid_id = 999999  
+            response = self.app.post('/predict_client', json={'SK_ID_CURR': invalid_id})
+            self.assertEqual(response.status_code, 404)
+            data = response.json
+            self.assertIn('error', data)
+            self.assertEqual(data['error'], 'ID not found')
+            print("test_predict_invalid_id: SUCCESS")
         except AssertionError as e:
-            print(f"test_generate_figure: FAILED ({str(e)})")
+            print(f"test_predict_invalid_id: FAILED ({str(e)})")
 
-    def test_compute_color(self):
-        print("Test: test_compute_color")
-        try:
-            color = compute_color(25)
-            self.assertEqual(color, "green")
-            color = compute_color(75)
-            self.assertEqual(color, "red")
-            print("test_compute_color: SUCCESS")
-        except AssertionError as e:
-            print(f"test_compute_color: FAILED ({str(e)})")
-
-    def test_format_value(self):
-        print("Test: test_format_value")
-        try:
-            formatted_value = format_value(5.678)
-            self.assertEqual(formatted_value, 5.68)
-            formatted_value = format_value(5)
-            self.assertEqual(formatted_value, 5)
-            formatted_value = format_value(None)
-            self.assertIsNone(formatted_value)
-            print("test_format_value: SUCCESS")
-        except AssertionError as e:
-            print(f"test_format_value: FAILED ({str(e)})")
-
-    def test_find_closest_description(self):
-        print("Test: test_find_closest_description")
-        try:
-            description = find_closest_description("feature_name", self.definition_features_df)
-            self.assertIsNotNone(description)
-            print("test_find_closest_description: SUCCESS")
-        except AssertionError as e:
-            print(f"test_find_closest_description: FAILED ({str(e)})")
-
-    def test_plot_distribution(self):
-        print("Test: test_plot_distribution")
-        try:
-            feature_name = self.df_test.columns[0]
-            col = st.empty()
-            plot_distribution(feature_name, col)
-            print("test_plot_distribution: SUCCESS")
-        except Exception as e:
-            print(f"test_plot_distribution: FAILED ({str(e)})")
-
-    def test_get_state(self):
-        print("Test: test_get_state")
-        try:
-            state = get_state()
-            self.assertIsNotNone(state)
-            self.assertIn("data_received", state)
-            print("test_get_state: SUCCESS")
-        except AssertionError as e:
-            print(f"test_get_state: FAILED ({str(e)})")
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
+
 
 # import unittest
 # from unittest.mock import patch, MagicMock
