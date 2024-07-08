@@ -18,13 +18,13 @@ class TestFlaskApp(unittest.TestCase):
 
         # Charger le modèle et le scaler en mémoire
         current_directory = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(current_directory, "model_weights", "clf_xgb_o.pkl")
+        model_path = os.path.join(current_directory, "..", "model_weights", "clf_xgb_o.pkl")
         self.model = joblib.load(model_path)
-        scaler_path = os.path.join(current_directory, "model_weights", "scaler.pkl")
+        scaler_path = os.path.join(current_directory, "..", "model_weights", "scaler.pkl")
         self.scaler = joblib.load(scaler_path)
 
         # Charger les données de test
-        csv_path = os.path.join(current_directory, "model_weights", "df_test.csv")
+        csv_path = os.path.join(current_directory, "..", "model_weights", "df_test.csv")
         self.df_test = pd.read_csv(csv_path)
 
     def tearDown(self):
