@@ -9,7 +9,7 @@ from flask import Flask, jsonify, request
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Importer les éléments nécessaires du fichier api.py
-from app import app, current_directory, model, predict
+from app import app, model, predict
 
 # Créer un client de test pour l'application Flask
 @pytest.fixture
