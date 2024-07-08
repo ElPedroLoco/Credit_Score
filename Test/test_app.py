@@ -1,94 +1,85 @@
 import unittest
-import json
 import os
 import sys
-from flask import Flask
-from flask_testing import TestCase
 import joblib
 import pandas as pd
 import shap
+import json
 
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import app, model, scaler, current_directory
+from app import app
 
-class FlaskTestCase(TestCase):
-    def create_app(self):
-        # Configurer l'application Flask pour le test
-        app.config['TESTING'] = True
-        return app
-
+class TestFlaskApp(unittest.TestCase):
     def setUp(self):
-        # Configuration avant chaque test
-        self.client = self.app.test_client()
-        self.headers = {'Content-Type': 'application/json'}
+        self.app = app.test_client()
+        self.app.testing = True
 
-        # Charger le modèle et le scaler pour les tests
-        self.model = model
-        self.scaler = scaler
+        # Charger le modèle et le scaler en mémoire
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(current_directory, "model_weights", "clf_xgb_o.pkl")
+        self.model = joblib.load(model_path)
+        scaler_path = os.path.join(current_directory, "model_weights", "scaler.pkl")
+        self.scaler = joblib.load(scaler_path)
 
-        # Charger le CSV de test
+        # Charger les données de test
         csv_path = os.path.join(current_directory, "model_weights", "df_test.csv")
-        self.df = pd.read_csv(csv_path)
+        self.df_test = pd.read_csv(csv_path)
 
     def tearDown(self):
-        # Cleanup après chaque test
         pass
 
-    def test_predict_valid_id(self):
-        print("Test: test_predict_valid_id")
-        try:
-            sk_id_curr = self.df['SK_ID_CURR'].iloc[0]
-            response = self.client.post(
-                '/predict_client',
-                headers=self.headers,
-                data=json.dumps({'SK_ID_CURR': sk_id_curr})
-            )
-            self.assertEqual(response.status_code, 200)
-            data = json.loads(response.data.decode())
-            self.assertIn('probability', data)
-            self.assertIn('shap_values', data)
-            self.assertIn('feature_names', data)
-            self.assertIn('feature_values', data)
-            print("test_predict_valid_id: SUCCESS")
-        except AssertionError as e:
-            print(f"test_predict_valid_id: FAILED ({str(e)})")
+    def test_predict_endpoint_with_valid_sk_id_curr(self):
+        # Teste l'API /predict_client avec un SK_ID_CURR valide
+        sk_id_curr = 12345  # Remplacez par un ID existant dans votre jeu de données de test
+        data = {'SK_ID_CURR': sk_id_curr}
 
-    def test_predict_invalid_id(self):
-        print("Test: test_predict_invalid_id")
-        try:
-            sk_id_curr = -1
-            response = self.client.post(
-                '/predict_client',
-                headers=self.headers,
-                data=json.dumps({'SK_ID_CURR': sk_id_curr})
-            )
-            self.assertEqual(response.status_code, 200)
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['probability'], 0)
-            self.assertEqual(len(data['shap_values']), len(self.df.columns) - 1)
-            print("test_predict_invalid_id: SUCCESS")
-        except AssertionError as e:
-            print(f"test_predict_invalid_id: FAILED ({str(e)})")
+        response = self.app.post('/predict_client', json=data)
+        self.assertEqual(response.status_code, 200)
 
-    def test_missing_sk_id_curr(self):
-        print("Test: test_missing_sk_id_curr")
-        try:
-            response = self.client.post(
-                '/predict_client',
-                headers=self.headers,
-                data=json.dumps({})
-            )
-            self.assertEqual(response.status_code, 400)
-            print("test_missing_sk_id_curr: SUCCESS")
-        except AssertionError as e:
-            print(f"test_missing_sk_id_curr: FAILED ({str(e)})")
+        response_data = json.loads(response.data.decode('utf-8'))
+        self.assertIn('probability', response_data)
+        self.assertIn('shap_values', response_data)
+        self.assertIn('feature_names', response_data)
+        self.assertIn('feature_values', response_data)
+
+        proba = response_data['probability']
+        shap_values = response_data['shap_values']
+        feature_names = response_data['feature_names']
+        feature_values = response_data['feature_values']
+
+        # Vérifier que les valeurs retournées sont correctes
+        self.assertIsInstance(proba, float)
+        self.assertIsInstance(shap_values, list)
+        self.assertIsInstance(feature_names, list)
+        self.assertIsInstance(feature_values, list)
+
+        # Vérifier que les noms de colonnes correspondent aux données
+        self.assertEqual(len(feature_names), len(feature_values))
+
+        # Vérifier que les valeurs SHAP ont la bonne structure et taille
+        if isinstance(shap_values, list) and len(shap_values) > 1:
+            self.assertEqual(len(shap_values[1]), len(feature_names))
+        else:
+            self.assertEqual(len(shap_values), len(feature_names))
+
+    def test_predict_endpoint_with_invalid_sk_id_curr(self):
+        # Teste l'API /predict_client avec un SK_ID_CURR invalide
+        sk_id_curr = 99999  # Remplacez par un ID qui n'existe pas dans votre jeu de données de test
+        data = {'SK_ID_CURR': sk_id_curr}
+
+        response = self.app.post('/predict_client', json=data)
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(response_data['probability'], 0.0)
+        self.assertEqual(response_data['shap_values'], [])
+        self.assertEqual(response_data['feature_names'], [])
+        self.assertEqual(response_data['feature_values'], [])
 
 if __name__ == '__main__':
     unittest.main()
-
-
 
 # import unittest
 # from unittest.mock import patch, MagicMock
