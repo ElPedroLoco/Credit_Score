@@ -10,7 +10,7 @@ app = Flask(__name__)
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Charger le modèle en dehors de la clause if __name__ == "__main__":
-model_path = os.path.join(current_directory, "model_weights", "clf_xgb_o.pkl")
+model_path = os.path.join(current_directory, "model_weights", "model.pkl")
 model = joblib.load(model_path)
 
 # Charger le scaler
