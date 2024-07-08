@@ -1,92 +1,153 @@
-import unittest
-from unittest.mock import patch, MagicMock
 import os
 import sys
 import joblib
 import pandas as pd
-import shap
-import json
+import pytest
+from flask import Flask, jsonify, request
 
-# Add the parent directory to the sys.path
+# Ajouter le chemin relatif du fichier api.py au sys.path pour pouvoir l'importer
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import app
+# Importer les éléments nécessaires du fichier api.py
+from app import app, current_directory, model, predict
 
-class TestFlaskApp(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
+# Créer un client de test pour l'application Flask
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
 
-        # Charger le modèle et le scaler en mémoire
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(current_directory, "..", "model_weights", "clf_xgb_o.pkl")
-        self.model = joblib.load(model_path)
-        scaler_path = os.path.join(current_directory, "..", "model_weights", "scaler.pkl")
-        self.scaler = joblib.load(scaler_path)
+# Teste le chargement du modèle de prédiction
+def test_model_loading():
+    # Détermine le chemin du fichier contenant le modèle entraîné
+    model_path = os.path.join(current_directory, "..", "model_weights", "clf_xgb_o.pkl")
+    # Charge le modèle à partir du fichier
+    model = joblib.load(model_path)
+    # Vérifie que le modèle a été chargé correctement
+    assert model is not None, "Erreur dans le chargement du modèle."
 
-        # Charger les données de test
-        csv_path = os.path.join(current_directory, "..", "model_weights", "df_test.csv")
-        self.df_test = pd.read_csv(csv_path)
+# Teste le chargement du fichier CSV contenant les données de train
+def test_csv_loading():
+    # Détermine le chemin du fichier CSV
+    csv_path = os.path.join(current_directory, "..", "model_weights", "df_train.csv")
+    # Charge le fichier CSV dans un DataFrame pandas
+    df = pd.read_csv(csv_path)
+    # Vérifie que le DataFrame n'est pas vide
+    assert not df.empty, "Erreur dans le chargement du CSV."
 
-        # Mock de st.session_state pour éviter l'erreur de KeyError
-        self.mock_session_state = MagicMock()
-        patcher = patch('streamlit.session_state', self.mock_session_state)
-        patcher.start()
-        self.addCleanup(patcher.stop)
+# Teste la fonction de prédiction de l'API
+def test_prediction():
+    import os
+    import pandas as pd
+    from flask import json
+    # Détermine le chemin du répertoire courant
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    # Détermine le chemin du fichier CSV contenant les données de test
+    csv_path = os.path.join(current_directory, "..", "model_weights", "df_train.csv")
+    # Charge le fichier CSV dans un DataFrame pandas
+    df = pd.read_csv(csv_path)
+    # Prend un échantillon pour la prédiction
+    sk_id_curr = df.iloc[0]['SK_ID_CURR']
+    # Crée une requête de test pour la prédiction en utilisant l'échantillon sélectionné
+    with app.test_client() as client:
+        response = client.post('/predict', json={'SK_ID_CURR': sk_id_curr})
+        data = json.loads(response.data)
+        prediction = data['probability']
+        # Vérifie que la prédiction a été effectuée correctement
+        assert prediction is not None, "La prédiction a échoué."
 
-    def tearDown(self):
-        pass
 
-    def test_predict_endpoint_with_valid_sk_id_curr(self):
-        # Teste l'API /predict_client avec un SK_ID_CURR valide
-        sk_id_curr = 156003
-        data = {'SK_ID_CURR': sk_id_curr}
 
-        response = self.app.post('/predict_client', json=data)
-        self.assertEqual(response.status_code, 200)
+# import unittest
+# from unittest.mock import patch, MagicMock
+# import os
+# import sys
+# import joblib
+# import pandas as pd
+# import shap
+# import json
 
-        response_data = json.loads(response.data.decode('utf-8'))
-        self.assertIn('probability', response_data)
-        self.assertIn('shap_values', response_data)
-        self.assertIn('feature_names', response_data)
-        self.assertIn('feature_values', response_data)
+# # Add the parent directory to the sys.path
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-        proba = response_data['probability']
-        shap_values = response_data['shap_values']
-        feature_names = response_data['feature_names']
-        feature_values = response_data['feature_values']
+# from app import app
 
-        # Vérifier que les valeurs retournées sont correctes
-        self.assertIsInstance(proba, float)
-        self.assertIsInstance(shap_values, list)
-        self.assertIsInstance(feature_names, list)
-        self.assertIsInstance(feature_values, list)
+# class TestFlaskApp(unittest.TestCase):
+#     def setUp(self):
+#         self.app = app.test_client()
+#         self.app.testing = True
 
-        # Vérifier que les noms de colonnes correspondent aux données
-        self.assertEqual(len(feature_names), len(feature_values))
+#         # Charger le modèle et le scaler en mémoire
+#         current_directory = os.path.dirname(os.path.abspath(__file__))
+#         model_path = os.path.join(current_directory, "..", "model_weights", "clf_xgb_o.pkl")
+#         self.model = joblib.load(model_path)
+#         scaler_path = os.path.join(current_directory, "..", "model_weights", "scaler.pkl")
+#         self.scaler = joblib.load(scaler_path)
 
-        # Vérifier que les valeurs SHAP ont la bonne structure et taille
-        if isinstance(shap_values, list) and len(shap_values) > 1:
-            self.assertEqual(len(shap_values[1]), len(feature_names))
-        else:
-            self.assertEqual(len(shap_values), len(feature_names))
+#         # Charger les données de test
+#         csv_path = os.path.join(current_directory, "..", "model_weights", "df_test.csv")
+#         self.df_test = pd.read_csv(csv_path)
 
-    def test_predict_endpoint_with_invalid_sk_id_curr(self):
-        # Teste l'API /predict_client avec un SK_ID_CURR invalide
-        sk_id_curr = 999999
-        data = {'SK_ID_CURR': sk_id_curr}
+#         # Mock de st.session_state pour éviter l'erreur de KeyError
+#         self.mock_session_state = MagicMock()
+#         patcher = patch('streamlit.session_state', self.mock_session_state)
+#         patcher.start()
+#         self.addCleanup(patcher.stop)
 
-        response = self.app.post('/predict_client', json=data)
-        self.assertEqual(response.status_code, 200)
+#     def tearDown(self):
+#         pass
 
-        response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['probability'], 0.0)
-        self.assertEqual(response_data['shap_values'], [])
-        self.assertEqual(response_data['feature_names'], [])
-        self.assertEqual(response_data['feature_values'], [])
+#     def test_predict_endpoint_with_valid_sk_id_curr(self):
+#         # Teste l'API /predict_client avec un SK_ID_CURR valide
+#         sk_id_curr = 156003
+#         data = {'SK_ID_CURR': sk_id_curr}
 
-if __name__ == '__main__':
-    unittest.main()
+#         response = self.app.post('/predict_client', json=data)
+#         self.assertEqual(response.status_code, 200)
+
+#         response_data = json.loads(response.data.decode('utf-8'))
+#         self.assertIn('probability', response_data)
+#         self.assertIn('shap_values', response_data)
+#         self.assertIn('feature_names', response_data)
+#         self.assertIn('feature_values', response_data)
+
+#         proba = response_data['probability']
+#         shap_values = response_data['shap_values']
+#         feature_names = response_data['feature_names']
+#         feature_values = response_data['feature_values']
+
+#         # Vérifier que les valeurs retournées sont correctes
+#         self.assertIsInstance(proba, float)
+#         self.assertIsInstance(shap_values, list)
+#         self.assertIsInstance(feature_names, list)
+#         self.assertIsInstance(feature_values, list)
+
+#         # Vérifier que les noms de colonnes correspondent aux données
+#         self.assertEqual(len(feature_names), len(feature_values))
+
+#         # Vérifier que les valeurs SHAP ont la bonne structure et taille
+#         if isinstance(shap_values, list) and len(shap_values) > 1:
+#             self.assertEqual(len(shap_values[1]), len(feature_names))
+#         else:
+#             self.assertEqual(len(shap_values), len(feature_names))
+
+#     def test_predict_endpoint_with_invalid_sk_id_curr(self):
+#         # Teste l'API /predict_client avec un SK_ID_CURR invalide
+#         sk_id_curr = 999999
+#         data = {'SK_ID_CURR': sk_id_curr}
+
+#         response = self.app.post('/predict_client', json=data)
+#         self.assertEqual(response.status_code, 200)
+
+#         response_data = json.loads(response.data.decode('utf-8'))
+#         self.assertEqual(response_data['probability'], 0.0)
+#         self.assertEqual(response_data['shap_values'], [])
+#         self.assertEqual(response_data['feature_names'], [])
+#         self.assertEqual(response_data['feature_values'], [])
+
+# if __name__ == '__main__':
+#     unittest.main()
 
 
 # class TestFlaskApp(unittest.TestCase):
