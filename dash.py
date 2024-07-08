@@ -84,9 +84,9 @@ def generate_annotations(df, x_anchor):
 
 
 def compute_color(value):
-    if 0 <= value < 48:
+    if 0 <= value < 53:
         return "green"
-    elif 48 <= value <= 100:
+    elif 53 <= value <= 100:
         return "red"
 
 
@@ -277,7 +277,7 @@ if col1.button("Run") or state["data_received"]:
     )
 
     decision_message = (
-        "Le prêt sera accordé." if proba < 48 else "Le prêt ne sera pas accordé."
+        "Le prêt sera accordé." if proba < 53 else "Le prêt ne sera pas accordé."
     )
     st.markdown(
         f"<div style='text-align: center; color:{color}; font-size:30px; border:2px solid {color}; padding:10px;'>{decision_message}</div>",
