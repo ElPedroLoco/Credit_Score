@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 import streamlit as st
+import sys
 
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
