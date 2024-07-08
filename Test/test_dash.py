@@ -1,50 +1,65 @@
 import unittest
 import os
-import pandas as pd
-import numpy as np
-import streamlit as st
 import sys
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
 
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from dash import dash
+from dash import (  # Remplacez 'your_script' par le nom de votre fichier
+    generate_figure,
+    generate_annotations,
+    compute_color,
+    format_value,
+    find_closest_description,
+)
 
-class FlaskTestCase(unittest.TestCase):
+class TestGenerateFigure(unittest.TestCase):
     def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
+        # Mettez en place les données nécessaires pour les tests si nécessaire
+        self.df = pd.DataFrame({
+            'Feature': ['Feature A', 'Feature B', 'Feature C'],
+            'SHAP Value': [0.5, -0.3, 0.8],
+            'Feature Value': [10, 20, 30]
+        })
+    
+    def test_generate_figure(self):
+        # Teste la création d'une figure avec les données fournies
+        fig = generate_figure(self.df, "Test Figure", "right", "total ascending", "left")
+        self.assertIsInstance(fig, go.Figure)
+        self.assertEqual(len(fig.data), 1)  # Vérifie qu'il y a une seule trace de données dans la figure
 
-    def tearDown(self):
-        pass
+    def test_generate_annotations(self):
+        # Teste la création d'annotations à partir des données fournies
+        annotations = generate_annotations(self.df, "right")
+        self.assertIsInstance(annotations, list)
+        self.assertEqual(len(annotations), len(self.df))  # Vérifie que le nombre d'annotations est correct
 
-    def test_predict_valid_id(self):
-        print("Test: test_predict_valid_id")
-        try:
-            valid_id = 156003  
-            response = self.app.post('/predict_client', json={'SK_ID_CURR': valid_id})
-            self.assertEqual(response.status_code, 200)
-            data = response.json
-            self.assertIn('probability', data)
-            self.assertIn('shap_values', data)
-            self.assertIn('feature_names', data)
-            self.assertIn('feature_values', data)
-            print("test_predict_valid_id: SUCCESS")
-        except AssertionError as e:
-            print(f"test_predict_valid_id: FAILED ({str(e)})")
+    def test_compute_color(self):
+        # Teste la fonction de calcul de couleur pour différentes valeurs
+        self.assertEqual(compute_color(20), "green")
+        self.assertEqual(compute_color(70), "red")
+        self.assertEqual(compute_color(48), "red")
+        self.assertEqual(compute_color(0), "green")
+        self.assertEqual(compute_color(100), "red")
 
-    def test_predict_invalid_id(self):
-        print("Test: test_predict_invalid_id")
-        try:
-            invalid_id = 999999  
-            response = self.app.post('/predict_client', json={'SK_ID_CURR': invalid_id})
-            self.assertEqual(response.status_code, 404)
-            data = response.json
-            self.assertIn('error', data)
-            self.assertEqual(data['error'], 'ID not found')
-            print("test_predict_invalid_id: SUCCESS")
-        except AssertionError as e:
-            print(f"test_predict_invalid_id: FAILED ({str(e)})")
+    def test_format_value(self):
+        # Teste la fonction de formatage de valeur pour différents types de données
+        self.assertEqual(format_value(10.123), 10.12)
+        self.assertEqual(format_value(15), 15)
+        self.assertEqual(format_value("Test"), "Test")
+        self.assertIsNone(format_value(None))
+
+    def test_find_closest_description(self):
+        # Teste la fonction de recherche de description en utilisant un dataframe simulé
+        definitions_df = pd.DataFrame({
+            'Row': ['Feature A', 'Feature B', 'Feature C'],
+            'Description': ['Description A', 'Description B', 'Description C']
+        })
+        self.assertEqual(find_closest_description('Feature A', definitions_df), 'Description A')
+        self.assertEqual(find_closest_description('Feature D', definitions_df), None)
 
 if __name__ == "__main__":
     unittest.main()
