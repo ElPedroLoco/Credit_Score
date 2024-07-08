@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import patch, MagicMock
 import os
 import sys
 import joblib
