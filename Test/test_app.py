@@ -36,22 +36,22 @@ def test_csv_loading():
     # Vérifie que le DataFrame n'est pas vide
     assert not df.empty, "Erreur dans le chargement du CSV."
 
-# # Teste la fonction de prédiction de l'API
-# def test_prediction():
-#     import os
-#     import pandas as pd
-#     from flask import json
-#     # Détermine le chemin du fichier CSV contenant les données de test
-#     csv_path = os.path.join("model_weights", "df_test.csv")
-#     # Charge le fichier CSV dans un DataFrame pandas
-#     df = pd.read_csv(csv_path)
-#     # Prend un échantillon pour la prédiction
-#     sk_id_curr = df.iloc[0]['SK_ID_CURR']
-#     # Crée une requête de test pour la prédiction en utilisant l'échantillon sélectionné
-#     with app.test_client() as client:
-#         response = client.post('/predict', json={'SK_ID_CURR': sk_id_curr})
-#         data = json.loads(response.data)
-#         prediction = data['probability']
-#         # Vérifie que la prédiction a été effectuée correctement
-#         assert prediction is not None, "La prédiction a échoué."
+# Teste la fonction de prédiction de l'API
+def test_prediction():
+    import os
+    import pandas as pd
+    from flask import json
+    # Détermine le chemin du fichier CSV contenant les données de test
+    csv_path = os.path.join("model_weights", "df_test.csv")
+    # Charge le fichier CSV dans un DataFrame pandas
+    df = pd.read_csv(csv_path)
+    # Prend un échantillon pour la prédiction
+    sk_id_curr = df.iloc[0]['SK_ID_CURR']
+    # Crée une requête de test pour la prédiction en utilisant l'échantillon sélectionné
+    with app.test_client() as client:
+        response = client.post('/predict_client', json={'SK_ID_CURR': sk_id_curr})
+        data = json.loads(response.data)
+        prediction = data['probability']
+        # Vérifie que la prédiction a été effectuée correctement
+        assert prediction is not None, "La prédiction a échoué."
 
