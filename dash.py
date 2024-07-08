@@ -272,7 +272,7 @@ if col1.button("Run") or state["data_received"]:
     color = compute_color(proba)
     st.empty()
     col2.markdown(
-        f"<p style='margin: 10px;'>La probabilité que le client ne puisse pas rembourser son crédit est de <span style='color:{color}; font-weight:bold;'>{proba:.2f}%</span> (Threshold : <strong>48%</strong>)</p>",
+        f"<p style='margin: 10px;'>La probabilité que le client ne puisse pas rembourser son crédit est de <span style='color:{color}; font-weight:bold;'>{proba:.2f}%</span> (Threshold : <strong>53%</strong>)</p>",
         unsafe_allow_html=True,
     )
 
