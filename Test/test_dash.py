@@ -1,6 +1,7 @@
-import unittest
 import os
 import sys
+import unittest
+from unittest.mock import patch, MagicMock
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -8,62 +9,156 @@ import plotly.graph_objects as go
 # Add the parent directory to the sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from dash import (  # Remplacez 'your_script' par le nom de votre fichier
-    generate_figure,
-    generate_annotations,
-    compute_color,
-    format_value,
-    find_closest_description,
-)
+import dash
 
-class TestGenerateFigure(unittest.TestCase):
+class TestDashApp(unittest.TestCase):
+
     def setUp(self):
-        # Mettez en place les données nécessaires pour les tests si nécessaire
-        self.df = pd.DataFrame({
-            'Feature': ['Feature A', 'Feature B', 'Feature C'],
-            'SHAP Value': [0.5, -0.3, 0.8],
-            'Feature Value': [10, 20, 30]
-        })
-    
-    def test_generate_figure(self):
-        # Teste la création d'une figure avec les données fournies
-        fig = generate_figure(self.df, "Test Figure", "right", "total ascending", "left")
-        self.assertIsInstance(fig, go.Figure)
-        self.assertEqual(len(fig.data), 1)  # Vérifie qu'il y a une seule trace de données dans la figure
+        # Mock st.session_state
+        self.mock_session_state = MagicMock()
+        self.mock_session_state.__getitem__.side_effect = self.get_session_state_side_effect
+        dash.st.session_state = self.mock_session_state
 
-    def test_generate_annotations(self):
-        # Teste la création d'annotations à partir des données fournies
-        annotations = generate_annotations(self.df, "right")
-        self.assertIsInstance(annotations, list)
-        self.assertEqual(len(annotations), len(self.df))  # Vérifie que le nombre d'annotations est correct
+    def get_session_state_side_effect(self, key):
+        if key == 'state':
+            return {}
+        else:
+            raise KeyError(f"Key '{key}' not found in session_state mock")
 
-    def test_compute_color(self):
-        # Teste la fonction de calcul de couleur pour différentes valeurs
-        self.assertEqual(compute_color(20), "green")
-        self.assertEqual(compute_color(70), "red")
-        self.assertEqual(compute_color(48), "red")
-        self.assertEqual(compute_color(0), "green")
-        self.assertEqual(compute_color(100), "red")
+    @patch('dash.st.sidebar.multiselect')
+    @patch('dash.st.dataframe')
+    @patch('dash.pd.read_csv')
+    def test_filter_data(self, mock_read_csv, mock_dataframe, mock_multiselect):
+        print("Starting test_filter_data")
+        try:
+            # Mocking the data
+            data = {
+                'NAME_CONTRACT_TYPE': ['Cash loans', 'Revolving loans'],
+                'CODE_GENDER': ['M', 'F'],
+                'NAME_FAMILY_STATUS': ['Married', 'Single'],
+                'NAME_HOUSING_TYPE': ['House / apartment', 'Rented apartment'],
+                'CNT_CHILDREN': [0, 1],
+                'DAYS_BIRTH': [-10000, -12000],
+                'Prediction : 1': [0.1, 0.2]
+            }
+            df = pd.DataFrame(data)
+            mock_read_csv.return_value = df
 
-    def test_format_value(self):
-        # Teste la fonction de formatage de valeur pour différents types de données
-        self.assertEqual(format_value(10.123), 10.12)
-        self.assertEqual(format_value(15), 15)
-        self.assertEqual(format_value("Test"), "Test")
-        self.assertIsNone(format_value(None))
+            # Mocking user input
+            mock_multiselect.side_effect = [
+                ['Cash loans'],  # contract_type
+                ['M'],           # sexe
+                ['Married'],     # civil_status
+                ['House / apartment'],  # habitation_type
+                [0]              # nombre_enfants
+            ]
 
-    def test_find_closest_description(self):
-        # Teste la fonction de recherche de description en utilisant un dataframe simulé
-        definitions_df = pd.DataFrame({
-            'Row': ['Feature A', 'Feature B', 'Feature C'],
-            'Description': ['Description A', 'Description B', 'Description C']
-        })
-        self.assertEqual(find_closest_description('Feature A', definitions_df), 'Description A')
-        self.assertEqual(find_closest_description('Feature D', definitions_df), None)
+            # Patching Streamlit functions
+            dash.st.set_page_config = MagicMock()
+            dash.st.title = MagicMock()
+            dash.st.markdown = MagicMock()
+            dash.st.subheader = MagicMock()
+            dash.st.plotly_chart = MagicMock()
 
-if __name__ == "__main__":
+            # Re-execute the code within the dash module with mocks in place
+            importlib.reload(dash)
+
+            # Assertions to ensure that the DataFrame is filtered correctly
+            filtered_df = dash.df_selection
+            self.assertEqual(filtered_df.shape[0], 1)
+            self.assertEqual(filtered_df.iloc[0]['NAME_CONTRACT_TYPE'], 'Cash loans')
+            self.assertEqual(filtered_df.iloc[0]['CODE_GENDER'], 'M')
+            self.assertEqual(filtered_df.iloc[0]['NAME_FAMILY_STATUS'], 'Married')
+            self.assertEqual(filtered_df.iloc[0]['NAME_HOUSING_TYPE'], 'House / apartment')
+            self.assertEqual(filtered_df.iloc[0]['CNT_CHILDREN'], 0)
+
+            print("Assertions passed for test_filter_data")
+
+        except Exception as e:
+            print(f"Error in test_filter_data: {e}")
+            raise
+
+    @patch('dash.st.text_input')
+    @patch('dash.requests.get')
+    def test_api_calls(self, mock_get, mock_text_input):
+        print("Starting test_api_calls")
+        try:
+            # Mocking user input
+            mock_text_input.side_effect = ['123', '456']
+
+            # Mocking the API response
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {'info': 'some client info'}
+            mock_get.return_value = mock_response
+
+            # Mocking Streamlit write function
+            dash.st.write = MagicMock()
+
+            # Re-execute the code within the dash module with mocks in place
+            importlib.reload(dash)
+
+            # Assertions to ensure that the API call is made correctly
+            dash.requests.get.assert_any_call('http://ec2-35-181-155-27.eu-west-3.compute.amazonaws.com:5000/infos_client?id_client=123')
+            dash.requests.get.assert_any_call('http://ec2-35-181-155-27.eu-west-3.compute.amazonaws.com:5000/predict_client?id_client=456')
+            dash.st.write.assert_called_with({'info': 'some client info'})
+
+            print("Assertions passed for test_api_calls")
+
+        except Exception as e:
+            print(f"Error in test_api_calls: {e}")
+            raise
+
+    @patch('dash.st.sidebar.multiselect')
+    @patch('dash.pd.read_csv')
+    def test_statistics_calculation(self, mock_read_csv, mock_multiselect):
+        print("Starting test_statistics_calculation")
+        try:
+            # Mocking the data
+            data = {
+                'NAME_CONTRACT_TYPE': ['Cash loans', 'Revolving loans'],
+                'CODE_GENDER': ['M', 'F'],
+                'NAME_FAMILY_STATUS': ['Married', 'Single'],
+                'NAME_HOUSING_TYPE': ['House / apartment', 'Rented apartment'],
+                'CNT_CHILDREN': [0, 1],
+                'DAYS_BIRTH': [-10000, -12000],
+                'Prediction : 1': [0.1, 0.2]
+            }
+            df = pd.DataFrame(data)
+            mock_read_csv.return_value = df
+
+            # Mocking user input
+            mock_multiselect.side_effect = [
+                ['Cash loans', 'Revolving loans'],  # contract_type
+                ['M', 'F'],           # sexe
+                ['Married', 'Single'],     # civil_status
+                ['House / apartment', 'Rented apartment'],  # habitation_type
+                [0, 1]              # nombre_enfants
+            ]
+
+            # Patching Streamlit functions
+            dash.st.set_page_config = MagicMock()
+            dash.st.title = MagicMock()
+            dash.st.markdown = MagicMock()
+            dash.st.subheader = MagicMock()
+            dash.st.plotly_chart = MagicMock()
+
+            # Re-execute the code within the dash module with mocks in place
+            importlib.reload(dash)
+
+            # Assertions to ensure that statistics are calculated correctly
+            self.assertEqual(dash.nombre_clients, 2)
+            self.assertAlmostEqual(dash.average_age, 30.1)
+            self.assertAlmostEqual(dash.average_prediction, 15.0)
+
+            print("Assertions passed for test_statistics_calculation")
+
+        except Exception as e:
+            print(f"Error in test_statistics_calculation: {e}")
+            raise
+
+if __name__ == '__main__':
     unittest.main()
-
 
 # import unittest
 # from unittest.mock import patch, MagicMock
