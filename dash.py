@@ -20,6 +20,19 @@ definition_features_df = pd.read_csv(path_definition_features_df)
 
 st.set_page_config(layout="wide")
 
+st.markdown(
+    """
+    <style>
+    .white-text {
+        color: white;
+    }
+    body {
+        background-color: black;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 def get_title_font_size(height):
     base_size = 12  # une taille de police de base
@@ -201,7 +214,7 @@ state = get_state()
 
 
 st.markdown(
-    "<h1 style='text-align: center; color: black;'>Estimation du risque de non-remboursement</h1>",
+    "<h1 style='text-align: center; color: white;'>Estimation du risque de non-remboursement</h1>",
     unsafe_allow_html=True,
 )
 sk_id_curr = st.text_input(
