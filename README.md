@@ -31,7 +31,7 @@ J'ai utilisé deux librairies Python pour ce sujet :
     Flask
     Streamlit
     
-Les tests on été effectués avec la librairie Unitest.
+Les tests on été effectués avec la librairie Pytest.
 
 Données d'entrées
 
